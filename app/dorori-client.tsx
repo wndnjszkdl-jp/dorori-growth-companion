@@ -33,6 +33,7 @@ export function DororiClient(){
  const [xp,setXp]=useState(230),[done,setDone]=useState<number[]>([]),[input,setInput]=useState(""),[loading,setLoading]=useState(false),[notice,setNotice]=useState(""),[notifications,setNotifications]=useState(true);
  const [messages,setMessages]=useState<Message[]>([{me:false,t:"왔구나. 오늘은 어떤 하루였어? 한 문장이어도 괜찮아.",emotion:"listening"}]);
  const talkRef=useRef<HTMLDivElement>(null);
+ useEffect(()=>{if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{})},[]);
  useEffect(()=>{if(view!=="chat")return;requestAnimationFrame(()=>talkRef.current?.scrollTo({top:talkRef.current.scrollHeight,behavior:"smooth"}))},[messages,loading,view]);
  useEffect(()=>{const saved=localStorage.getItem("dorori_progress");if(saved){try{const d=JSON.parse(saved);setXp(d.xp??230);setDone(Array.isArray(d.done)?d.done.filter((x:any)=>typeof x==="string"):[]);if(Number.isInteger(d.type))setType(d.type);if(d.profile)setProfile(d.profile)}catch{}}},[]);
  const today=new Date().toISOString().slice(0,10);
