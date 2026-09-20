@@ -9,9 +9,11 @@ export async function POST(request: Request) {
     const key = process.env.GEMINI_API_KEY;
     if (!key) return NextResponse.json({ reply: "아직 내 생각을 연결하는 준비가 덜 됐어. 잠시 후 다시 말해줄래?", emotion: "neutral" });
     const history = Array.isArray(body.history) ? body.history.slice(-20) : [];
-    const contents = [...history.map((x: any) => ({ role: x.role === "model" ? "model" : "user", parts: [{ text: String(x.text || "").slice(0, 1200) }] })), { role: "user", parts: [{ text: message }] }];
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`;
-    const result = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ systemInstruction: { parts: [{ text: `${base}\n캐릭터: ${profiles[body.character] || profiles.roy}` }] }, contents, generationConfig: { temperature: .85, maxOutputTokens: 500, responseMimeType: "application/json" } }) });
+    const turns = history.map((x: any) => ({ role: x.role === "model" ? "model" : "user", parts: [{ text: String(x.text || "").slice(0, 1200) }] }));
+    while (turns[0]?.role === "model") turns.shift();
+    const contents = [...turns, { role: "user", parts: [{ text: message }] }];
+    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+    const result = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify({ systemInstruction: { parts: [{ text: `${base}\n캐릭터: ${profiles[body.character] || profiles.roy}` }] }, contents, generationConfig: { temperature: .85, maxOutputTokens: 500, responseMimeType: "application/json" } }) });
     if (!result.ok) return NextResponse.json({ reply: "앗, 잠깐 생각이 꼬였어. 한 번만 다시 말해줄래?", emotion: "neutral" });
     const data: any = await result.json();
     const raw = data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text || "").join("") || "";
