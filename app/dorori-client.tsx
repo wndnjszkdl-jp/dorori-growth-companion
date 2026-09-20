@@ -10,7 +10,7 @@ function Character({type,className="character"}:{type:number,className?:string})
 type Message={me:boolean;t:string;emotion?:string};
 
 export function DororiClient(){
- const [view,setView]=useState("start"),[email,setEmail]=useState(""),[password,setPassword]=useState(""),[mode,setMode]=useState("signup"),[status,setStatus]=useState(""),[type,setType]=useState(0),[input,setInput]=useState(""),[messages,setMessages]=useState<Message[]>([{me:false,t:"왔구나. 오늘은 어떤 하루였어? 한 문장이어도 괜찮아.",emotion:"listening"}]),[loading,setLoading]=useState(false);
+ const [view,setView]=useState("start"),[email,setEmail]=useState(""),[password,setPassword]=useState(""),[mode,setMode]=useState("signup"),[status,setStatus]=useState(""),[type,setType]=useState(6),[input,setInput]=useState(""),[messages,setMessages]=useState<Message[]>([{me:false,t:"왔구나. 오늘은 어떤 하루였어? 한 문장이어도 괜찮아.",emotion:"listening"}]),[loading,setLoading]=useState(false);
  const talkRef=useRef<HTMLDivElement>(null);
  useEffect(()=>{if(view!=="chat")return;requestAnimationFrame(()=>talkRef.current?.scrollTo({top:talkRef.current.scrollHeight,behavior:"smooth"}))},[messages,loading,view]);
  const auth=async()=>{setStatus("확인 중이에요…");const r=await fetch(URL+(mode==="signup"?"/auth/v1/signup":"/auth/v1/token?grant_type=password"),{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify({email,password,options:{emailRedirectTo:location.origin}})}),d=await r.json();if(!r.ok)return setStatus(d.error_description||"다시 확인해 주세요.");if(!d.access_token)return setStatus("인증 메일을 보냈어요. 메일 링크를 누른 뒤 로그인해 주세요.");localStorage.setItem("dorori_token",d.access_token);setView("home")};
