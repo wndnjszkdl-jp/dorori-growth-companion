@@ -45,7 +45,7 @@ export function DororiClient(){
   setStatus("계정을 확인하고 있어요…");
   const body=mode==="signup"?{email:form.email,password:form.password,data:{name:form.name,nickname:form.nickname,age:form.age,gender:form.gender,xp:230,done:[],type:6,quest_date:today,test_done:false},options:{emailRedirectTo:location.origin}}:{email:form.email,password:form.password};
   const r=await fetch(URL+(mode==="signup"?"/auth/v1/signup":"/auth/v1/token?grant_type=password"),{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify(body)}),d=await r.json();
-  if(!r.ok)return setStatus(d.error_description||d.msg||"입력한 정보를 다시 확인해 주세요.");
+  if(!r.ok){const error=String(d.error_description||d.msg||"").toLowerCase();if(error.includes("already registered")||error.includes("already exists")){setMode("signin");setStatus("이미 가입된 이메일이에요. 입력한 비밀번호로 로그인해 주세요.");return}if(error.includes("invalid login")||error.includes("invalid credentials")){setStatus("이메일 또는 비밀번호가 맞지 않아요.");return}setStatus("입력한 정보를 다시 확인해 주세요.");return}
   if(mode==="signup")localStorage.setItem(`dorori_profile_${form.email}`,JSON.stringify({name:form.name,nickname:form.nickname}));
   if(mode==="signup"&&!d.access_token){setStatus("가입 완료! 인증 메일의 링크를 누른 뒤 로그인해 주세요.");setMode("signin");return}
   const meta=d.user?.user_metadata||{};let cached={};try{cached=JSON.parse(localStorage.getItem(`dorori_profile_${form.email}`)||"{}") }catch{}
