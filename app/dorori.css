@@ -38,3 +38,15 @@ header{display:flex;justify-content:space-between;align-items:center}header smal
 .app-screen{padding-bottom:150px}
 .bottom-nav{bottom:0!important}
 @media(min-width:700px){.bottom-nav{border-radius:22px 22px 0 0}}
+
+/* Dorori character motion */
+.start-character,.account-character,.test-character,.result-character,.friend-character,.hero-character{animation:dororiFloat 3.8s ease-in-out infinite;transform-origin:50% 80%;will-change:transform}
+.home-character{animation:dororiHomeFloat 3.6s ease-in-out infinite;transform-origin:50% 82%;will-change:transform}
+.avatar{animation:dororiTinyFloat 2.8s ease-in-out infinite;transform-origin:50% 80%}
+.speech{animation:speechFloat 3.6s ease-in-out .35s infinite}
+.character-card:hover .home-character,.friend-card:hover .friend-character{animation-duration:1.8s}
+@keyframes dororiFloat{0%,100%{transform:translateY(0) rotate(-.8deg)}50%{transform:translateY(-9px) rotate(1deg)}}
+@keyframes dororiHomeFloat{0%,100%{transform:translateX(-50%) translateY(0) rotate(-.7deg)}50%{transform:translateX(-50%) translateY(-10px) rotate(1deg)}}
+@keyframes dororiTinyFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes speechFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1.02)}}
+@media(prefers-reduced-motion:reduce){.start-character,.account-character,.test-character,.result-character,.friend-character,.hero-character,.home-character,.avatar,.speech{animation:none!important}}
