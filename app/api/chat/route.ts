@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     const turns = history.map((x: any) => ({ role: x.role === "model" ? "model" : "user", parts: [{ text: String(x.text || "").slice(0, 1200) }] }));
     while (turns[0]?.role === "model") turns.shift();
     const contents = [...turns, { role: "user", parts: [{ text: message }] }];
-    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent";
     const result = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify({ systemInstruction: { parts: [{ text: `${base}\n캐릭터: ${profiles[body.character] || profiles.roy}` }] }, contents, generationConfig: { temperature: .85, maxOutputTokens: 500, responseMimeType: "application/json" } }) });
     if (!result.ok) { const error = await result.text(); console.error("[dorori-chat] Gemini request failed", { status: result.status, error: error.slice(0, 500) }); return NextResponse.json({ reply: "앗, 잠깐 생각이 꼬였어. 한 번만 다시 말해줄래?", emotion: "neutral" }); }
     const data: any = await result.json();
